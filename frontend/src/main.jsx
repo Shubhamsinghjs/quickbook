@@ -4,7 +4,24 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, CalendarDays, Check, Home, Mail, Pencil, X } from 'lucide-react';
 import './styles.css';
 
-const API = window.QUICKBOOK_API_URL || import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const DEFAULT_API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
+function readScriptConfig() {
+  const script = document.currentScript;
+  if (!script) return {};
+  try {
+    const url = new URL(script.src);
+    const api = url.searchParams.get('api') || script.dataset.api;
+    const mount = url.searchParams.get('mount') || script.dataset.mount;
+    return { api, mount };
+  } catch {
+    return {};
+  }
+}
+
+const SCRIPT_CONFIG = readScriptConfig();
+const API = window.QUICKBOOK_API_URL || SCRIPT_CONFIG.api || DEFAULT_API;
+const MOUNT_ID = window.QUICKBOOK_MOUNT_ID || SCRIPT_CONFIG.mount || 'quickbook-widget';
 
 async function request(path, options = {}) {
   const res = await fetch(`${API}${path}`, {
@@ -207,6 +224,6 @@ function App() {
   return <Confirm doctor={doctor} selection={selection} details={details} back={() => setStep(1)} />;
 }
 
-const mountId = window.QUICKBOOK_MOUNT_ID || 'quickbook-widget';
-const mount = document.getElementById(mountId);
+let mount = document.getElementById(MOUNT_ID);
+if (!mount) mount = document.querySelector('[id^="qb-root"]');
 if (mount) createRoot(mount).render(<App />);
