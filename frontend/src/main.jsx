@@ -245,7 +245,7 @@ function Details({ doctor, selection, details, setDetails, next, back }) {
 
   return <div className="qb-book-layout">
     <Stepper step={1} goBack={back} />
-    <section className="qb-panel qb-wide">
+    <section className="qb-panel">
       <h2 className="qb-panel-title">Your Session Details</h2>
       <SummaryCard doctor={doctor} selection={selection} editable={back} />
     </section>
@@ -291,13 +291,17 @@ function Countdown({ expiresAt }) {
 function Confirm({ doctor, selection, details, back }) {
   const [done, setDone] = useState(null);
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   async function confirm() {
+    if (loading) return;
+    setLoading(true);
     setError('');
     try {
       const booking = await request('/bookings', { method: 'POST', body: JSON.stringify({ doctor: doctor._id, ...details, date: selection.date, time: selection.time, lockToken: selection.lock.token }) });
       setDone(booking);
     } catch (err) {
       setError(err.message);
+      setLoading(false);
     }
   }
   if (done) return <div className="qb-success-container">
@@ -315,11 +319,11 @@ function Confirm({ doctor, selection, details, back }) {
   </div>;
   
   return <div className="qb-book-layout">
-    <Stepper step={2} goBack={back} />
-    <section className="qb-panel qb-wide">
+    <Stepper step={2} goBack={!loading ? back : null} />
+    <section className="qb-panel">
       <Countdown expiresAt={selection.lock.expiresAt} />
       <h2 className="qb-panel-title">Verify Session Details</h2>
-      <SummaryCard doctor={doctor} selection={selection} editable={back} />
+      <SummaryCard doctor={doctor} selection={selection} editable={!loading ? back : null} />
     </section>
     <section className="qb-panel qb-complete">
       <h2 className="qb-panel-title">Finalize Booking</h2>
@@ -333,7 +337,9 @@ function Confirm({ doctor, selection, details, back }) {
       </div>
       {error && <p className="qb-error">{error}</p>}
       <div className="qb-footer-action">
-        <button className="qb-primary qb-bottom" onClick={confirm}>Confirm Appointment</button>
+        <button className="qb-primary qb-bottom" onClick={confirm} disabled={loading}>
+          {loading ? 'Processing...' : 'Confirm Appointment'}
+        </button>
       </div>
     </section>
   </div>;
