@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs';
 import { Admin } from '../models/Admin.js';
 
 export async function ensureAdminUser() {
-  const email = process.env.ADMIN_EMAIL;
+  const email = process.env.ADMIN_LOGIN_EMAIL || process.env.ADMIN_EMAIL;
   const password = process.env.ADMIN_PASSWORD;
   if (!email || !password) return;
 
