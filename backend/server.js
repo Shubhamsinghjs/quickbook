@@ -21,8 +21,7 @@ const origins = (process.env.FRONTEND_ORIGIN || '').split(',').map((item) => ite
 const allowAllOrigins = origins.includes('*');
 
 function isAllowedOrigin(origin) {
-  if (!origin || allowAllOrigins || origins.length === 0) return true;
-  return origins.includes(origin);
+  return true; // Allow all origins for the public widget
 }
 
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
