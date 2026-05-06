@@ -193,6 +193,43 @@ function DashboardStats({ stats }) {
   </section>;
 }
 
+function SecurityPanel({ api }) {
+  const [form, setForm] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
+
+  async function updatePassword(event) {
+    event.preventDefault();
+    setMessage('');
+    setError('');
+    if (form.newPassword !== form.confirmPassword) {
+      setError('New password and confirm password must match');
+      return;
+    }
+    await api.request('/auth/change-password', {
+      method: 'PATCH',
+      body: JSON.stringify({
+        currentPassword: form.currentPassword,
+        newPassword: form.newPassword
+      })
+    });
+    setForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
+    setMessage('Password updated successfully');
+  }
+
+  return <section className="panel space-y-4">
+    <h2 className="section-title">Security</h2>
+    <form className="grid gap-3 md:grid-cols-3" onSubmit={(e) => updatePassword(e).catch((err) => setError(err.message))}>
+      <input className="input" type="password" placeholder="Current password" value={form.currentPassword} onChange={(e) => setForm({ ...form, currentPassword: e.target.value })} required />
+      <input className="input" type="password" placeholder="New password (min 8 chars)" value={form.newPassword} onChange={(e) => setForm({ ...form, newPassword: e.target.value })} required />
+      <input className="input" type="password" placeholder="Confirm new password" value={form.confirmPassword} onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })} required />
+      <button className="btn md:col-span-3 w-fit">Change Password</button>
+    </form>
+    {message && <p className="text-sm text-emerald-600">{message}</p>}
+    {error && <p className="text-sm text-red-600">{error}</p>}
+  </section>;
+}
+
 function App() {
   const [token, setToken] = useState(localStorage.quickbookToken || '');
   const [doctors, setDoctors] = useState([]);
@@ -211,6 +248,7 @@ function App() {
     </header>
     <div className="mx-auto max-w-7xl space-y-5">
       <DashboardStats stats={stats} />
+      <SecurityPanel api={api} />
       <DoctorForm api={api} doctors={doctors} refresh={refresh} />
       <Availability api={api} doctors={doctors} />
       <Bookings api={api} doctors={doctors} />

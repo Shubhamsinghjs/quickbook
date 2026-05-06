@@ -18,9 +18,21 @@ import { ensureAdminUser } from './services/admin.service.js';
 const app = express();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const origins = (process.env.FRONTEND_ORIGIN || '').split(',').map((item) => item.trim()).filter(Boolean);
+const allowAllOrigins = origins.includes('*');
+
+function isAllowedOrigin(origin) {
+  if (!origin || allowAllOrigins || origins.length === 0) return true;
+  return origins.includes(origin);
+}
 
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
-app.use(cors({ origin: origins.length ? origins : true, credentials: true }));
+app.use(cors({
+  origin(origin, callback) {
+    if (isAllowedOrigin(origin)) return callback(null, true);
+    return callback(new Error(`CORS blocked for origin: ${origin}`));
+  },
+  credentials: true
+}));
 app.use(express.json({ limit: '1mb' }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(rateLimit({ windowMs: 60_000, max: 240 }));

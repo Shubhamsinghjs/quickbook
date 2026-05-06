@@ -3,7 +3,7 @@ import { Admin } from '../models/Admin.js';
 
 export async function ensureAdminUser() {
   const email = process.env.ADMIN_LOGIN_EMAIL || process.env.ADMIN_EMAIL;
-  const password = process.env.ADMIN_PASSWORD;
+  const password = process.env.ADMIN_LOGIN_PASS || process.env.ADMIN_PASSWORD;
   if (!email || !password) return;
 
   const existing = await Admin.findOne({ email: email.toLowerCase() });
