@@ -26,14 +26,12 @@ router.post('/', async (req, res, next) => {
   try {
     await clearExpiredLocks();
     const input = bookingSchema.parse(req.body);
-    const [doctor, otp, lock] = await Promise.all([
+    const [doctor, lock] = await Promise.all([
       Doctor.findById(input.doctor),
-      Otp.findOne({ email: input.email.toLowerCase(), verified: true, expiresAt: { $gt: new Date() } }),
       SlotLock.findOne({ doctor: input.doctor, date: input.date, time: input.time, token: input.lockToken, expiresAt: { $gt: new Date() } })
     ]);
 
     if (!doctor) throw Object.assign(new Error('Doctor not found'), { status: 404 });
-    if (!otp) throw Object.assign(new Error('Please verify email OTP before confirming'), { status: 400 });
     if (!lock) throw Object.assign(new Error('Slot lock expired. Please select the slot again'), { status: 409 });
 
     const existing = await Booking.exists({ doctor: input.doctor, date: input.date, time: input.time, status: 'booked' });
@@ -81,7 +79,14 @@ router.get('/', requireAdmin, async (req, res, next) => {
 router.patch('/:id/status', requireAdmin, async (req, res, next) => {
   try {
     const { status } = z.object({ status: z.enum(['booked', 'completed', 'cancelled']) }).parse(req.body);
-    res.json(await Booking.findByIdAndUpdate(req.params.id, { status }, { new: true }).populate('doctor'));
+    const booking = await Booking.findByIdAndUpdate(req.params.id, { status }, { new: true }).populate('doctor');
+    
+    if (booking) {
+      let statusHtml = `<h2>Appointment Status Updated</h2><p>Your appointment with ${booking.doctor.name} on ${booking.date} at ${booking.time} is now <strong>${status}</strong>.</p>`;
+      await sendEmail({ to: booking.email, subject: `Appointment ${status.charAt(0).toUpperCase() + status.slice(1)}`, html: statusHtml }).catch(console.error);
+    }
+    
+    res.json(booking);
   } catch (err) {
     next(err);
   }

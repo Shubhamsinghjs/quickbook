@@ -25,19 +25,29 @@ const doctorSchema = z.object({
   isActive: z.coerce.boolean().optional()
 });
 
-function normalize(input, file) {
+function normalize(input, files) {
   const parsed = doctorSchema.parse(input);
   const specializations = parsed.specializations || parsed.tags || [];
   const normalizedSpecializations = typeof specializations === 'string'
     ? specializations.split(',').map((tag) => tag.trim()).filter(Boolean)
     : specializations;
-  return {
+    
+  const updates = {
     ...parsed,
     tags: normalizedSpecializations,
     specializations: normalizedSpecializations,
-    ...(file ? { image: `/uploads/${file.filename}` } : {})
   };
+  
+  if (files?.image?.[0]) updates.image = `/uploads/${files.image[0].filename}`;
+  if (files?.clinicImages?.length) updates.clinicImages = files.clinicImages.map(f => `/uploads/${f.filename}`);
+
+  return updates;
 }
+
+const doctorUpload = upload.fields([
+  { name: 'image', maxCount: 1 },
+  { name: 'clinicImages', maxCount: 10 }
+]);
 
 router.get('/', async (_req, res, next) => {
   try {
@@ -56,17 +66,17 @@ router.get('/admin/all', requireAdmin, async (_req, res, next) => {
   }
 });
 
-router.post('/', requireAdmin, upload.single('image'), async (req, res, next) => {
+router.post('/', requireAdmin, doctorUpload, async (req, res, next) => {
   try {
-    res.status(201).json(await Doctor.create(normalize(req.body, req.file)));
+    res.status(201).json(await Doctor.create(normalize(req.body, req.files)));
   } catch (err) {
     next(err);
   }
 });
 
-router.put('/:id', requireAdmin, upload.single('image'), async (req, res, next) => {
+router.put('/:id', requireAdmin, doctorUpload, async (req, res, next) => {
   try {
-    const doctor = await Doctor.findByIdAndUpdate(req.params.id, normalize(req.body, req.file), { new: true });
+    const doctor = await Doctor.findByIdAndUpdate(req.params.id, normalize(req.body, req.files), { new: true });
     res.json(doctor);
   } catch (err) {
     next(err);

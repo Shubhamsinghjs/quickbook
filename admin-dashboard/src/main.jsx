@@ -49,19 +49,25 @@ function Login({ onLogin }) {
 
 function DoctorForm({ api, doctors, refresh }) {
   const [editing, setEditing] = useState(null);
-  const [form, setForm] = useState({ name: '', experience: '', price: '', tags: '', locationName: '', address: '', image: null });
-  const reset = () => { setEditing(null); setForm({ name: '', experience: '', price: '', tags: '', locationName: '', address: '', image: null }); };
+  const [form, setForm] = useState({ name: '', experience: '', price: '', tags: '', locationName: '', address: '', image: null, clinicImages: [] });
+  const reset = () => { setEditing(null); setForm({ name: '', experience: '', price: '', tags: '', locationName: '', address: '', image: null, clinicImages: [] }); };
   async function save(event) {
     event.preventDefault();
     const data = new FormData();
-    Object.entries(form).forEach(([key, value]) => value !== null && data.append(key, value));
+    Object.entries(form).forEach(([key, value]) => {
+      if (key === 'clinicImages') {
+        Array.from(value).forEach(file => data.append('clinicImages', file));
+      } else if (value !== null) {
+        data.append(key, value);
+      }
+    });
     await api.request(editing ? `/doctors/${editing}` : '/doctors', { method: editing ? 'PUT' : 'POST', body: data });
     reset();
     refresh();
   }
   function edit(doc) {
     setEditing(doc._id);
-    setForm({ name: doc.name, experience: doc.experience, price: doc.price, tags: (doc.tags || []).join(', '), locationName: doc.locationName || '', address: doc.address || '', image: null });
+    setForm({ name: doc.name, experience: doc.experience, price: doc.price, tags: (doc.tags || []).join(', '), locationName: doc.locationName || '', address: doc.address || '', image: null, clinicImages: [] });
   }
   return <section className="grid gap-5 lg:grid-cols-[380px_1fr]">
     <form onSubmit={save} className="panel space-y-3">
@@ -72,7 +78,14 @@ function DoctorForm({ api, doctors, refresh }) {
       <input className="input" placeholder="Tags comma separated" value={form.tags} onChange={(e) => setForm({ ...form, tags: e.target.value })} />
       <input className="input" placeholder="Clinic name" value={form.locationName} onChange={(e) => setForm({ ...form, locationName: e.target.value })} />
       <textarea className="input min-h-20" placeholder="Address" value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} />
-      <input className="input" type="file" accept="image/*" onChange={(e) => setForm({ ...form, image: e.target.files[0] })} />
+      <div>
+        <label className="text-sm text-slate-500 font-medium mb-1 block">Profile Image</label>
+        <input className="input" type="file" accept="image/*" onChange={(e) => setForm({ ...form, image: e.target.files[0] })} />
+      </div>
+      <div>
+        <label className="text-sm text-slate-500 font-medium mb-1 block">Clinic Images (Multiple)</label>
+        <input className="input" type="file" accept="image/*" multiple onChange={(e) => setForm({ ...form, clinicImages: e.target.files })} />
+      </div>
       <div className="flex gap-2">
         <button className="btn"><Save size={16} /> {editing ? 'Update' : 'Add Doctor'}</button>
         {editing && <button type="button" className="btn-secondary" onClick={reset}>Cancel</button>}
@@ -84,6 +97,13 @@ function DoctorForm({ api, doctors, refresh }) {
         <h3 className="font-bold mt-3">{doc.name}</h3>
         <p className="text-sm text-slate-500">{doc.experience} | Rs {doc.price}</p>
         <div className="tags">{doc.tags?.map((tag) => <span key={tag}>{tag}</span>)}</div>
+        {doc.clinicImages?.length > 0 && (
+          <div className="flex gap-1 mt-2 overflow-x-auto pb-1">
+            {doc.clinicImages.map((img, i) => (
+              <img key={i} src={`${API.replace('/api', '')}${img}`} className="h-10 w-16 object-cover rounded shadow-sm flex-shrink-0" alt="" />
+            ))}
+          </div>
+        )}
         <div className="flex gap-2 mt-4">
           <button className="btn-secondary" onClick={() => edit(doc)}>Edit</button>
           <button className="icon-danger" onClick={async () => { await api.request(`/doctors/${doc._id}`, { method: 'DELETE' }); refresh(); }}><Trash2 size={16} /></button>

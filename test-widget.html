@@ -4,10 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Widget Test</title>
-    <link rel="stylesheet" href="./frontend/dist/quickbook-widget.css">
+    <link rel="stylesheet" href="./frontend/dist/quickbook-widget.css?v=2">
 </head>
-<body>
+<body style="background: #f0f0f0; padding: 40px; font-family: sans-serif;">
+    <h1 style="text-align: center; margin-bottom: 40px;">Shopify Store Preview</h1>
     <div id="qb-root-appointment" style="min-height:120px;"></div>
-    <script src="./frontend/dist/quickbook-widget.iife.js?mount=qb-root-appointment&api=https%3A%2F%2Fquickbook-backend-8hcm.onrender.com%2Fapi"></script>
+    <script src="./frontend/dist/quickbook-widget.iife.js?v=2&mount=qb-root-appointment&api=https%3A%2F%2Fquickbook-backend-8hcm.onrender.com%2Fapi" defer></script>
 </body>
 </html>

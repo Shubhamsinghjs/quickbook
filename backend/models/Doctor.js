@@ -10,6 +10,7 @@ const doctorSchema = new mongoose.Schema({
   description: { type: String, default: '' },
   locationName: { type: String, default: 'QuickBook Clinic' },
   address: { type: String, default: '' },
+  clinicImages: [{ type: String }],
   isActive: { type: Boolean, default: true }
 }, { timestamps: true });
 
