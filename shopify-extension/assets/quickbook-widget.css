@@ -1,0 +1,4 @@
+#quickbook-widget,
+[id^="quickbook-widget"] {
+  min-height: 80px;
+}

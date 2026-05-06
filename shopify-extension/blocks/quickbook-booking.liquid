@@ -1,0 +1,44 @@
+{% comment %}
+  Shopify theme app block / custom liquid snippet.
+  Host quickbook-widget.iife.js from your app, CDN, or theme assets.
+{% endcomment %}
+
+{% if block.settings.widget_css_url != blank %}
+  <link rel="stylesheet" href="{{ block.settings.widget_css_url }}">
+{% else %}
+  <link rel="stylesheet" href="{{ 'quickbook-widget.css' | asset_url }}">
+{% endif %}
+<div id="quickbook-widget-{{ block.id }}"></div>
+<script>
+  window.QUICKBOOK_API_URL = "{{ block.settings.api_url }}";
+  window.QUICKBOOK_MOUNT_ID = "quickbook-widget-{{ block.id }}";
+</script>
+{% if block.settings.widget_script_url != blank %}
+  <script src="{{ block.settings.widget_script_url }}" defer></script>
+{% else %}
+  <script src="{{ 'quickbook-widget.iife.js' | asset_url }}" defer></script>
+{% endif %}
+
+{% schema %}
+{
+  "name": "QuickBook Booking",
+  "target": "section",
+  "settings": [
+    {
+      "type": "url",
+      "id": "api_url",
+      "label": "QuickBook API URL"
+    },
+    {
+      "type": "url",
+      "id": "widget_script_url",
+      "label": "Widget script URL"
+    },
+    {
+      "type": "url",
+      "id": "widget_css_url",
+      "label": "Widget CSS URL"
+    }
+  ]
+}
+{% endschema %}

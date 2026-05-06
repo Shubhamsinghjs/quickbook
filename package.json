@@ -1,0 +1,19 @@
+{
+  "name": "quickbook",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Full-stack doctor appointment booking system with Shopify storefront widget and admin dashboard.",
+  "scripts": {
+    "dev": "concurrently \"npm run dev --workspace backend\" \"npm run dev --workspace frontend\" \"npm run dev --workspace admin-dashboard\"",
+    "build": "npm run build --workspace frontend && npm run build --workspace admin-dashboard",
+    "start": "npm run start --workspace backend"
+  },
+  "workspaces": [
+    "backend",
+    "frontend",
+    "admin-dashboard"
+  ],
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

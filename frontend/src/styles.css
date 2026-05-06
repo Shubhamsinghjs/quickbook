@@ -1,0 +1,87 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+#quickbook-widget, [id^="quickbook-widget"] { font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #242833; }
+.qb-doctor-grid { @apply grid gap-4 p-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4; }
+.qb-doctor-card { @apply rounded-md border border-blue-200 bg-white p-3 shadow-sm; }
+.qb-doctor-top { @apply grid grid-cols-[96px_1fr] gap-4; }
+.qb-doctor-top img { @apply h-24 w-24 rounded bg-slate-100 object-cover; }
+.qb-doctor-top h3 { @apply font-bold text-sm; }
+.qb-doctor-top p, .qb-doctor-top strong { @apply mt-1 block text-xs text-slate-600; }
+.qb-tags { @apply my-3 flex gap-1 overflow-hidden; }
+.qb-tags span { @apply whitespace-nowrap rounded border border-slate-200 bg-slate-50 px-2 py-1 text-[10px] text-slate-500; }
+.qb-mode-label, .qb-next { @apply text-xs text-slate-500; }
+.qb-mode-row { @apply my-2 flex gap-2; }
+.qb-mode-row button { @apply rounded border px-6 py-1 text-xs; }
+.qb-mode-row .selected { @apply border-brand text-brand; }
+.qb-card-actions { @apply mt-3 grid grid-cols-2 gap-2; }
+.qb-outline { @apply rounded-full border border-slate-300 py-2 text-xs font-bold uppercase; }
+.qb-primary { @apply rounded-full bg-brand px-6 py-3 text-sm font-bold uppercase tracking-wide text-white hover:bg-orange-700; }
+.qb-book-layout { @apply grid min-h-[620px] gap-6 bg-neutral-100 p-5 lg:grid-cols-[315px_1fr_1.4fr]; }
+.qb-stepper, .qb-panel { @apply rounded-lg bg-white p-6; }
+.qb-back { @apply mb-10 rounded-full p-2 hover:bg-slate-100; }
+.qb-steps { @apply space-y-10; }
+.qb-step { @apply flex items-center gap-4 text-lg; }
+.qb-step-icon { @apply grid h-8 w-8 place-items-center rounded-full bg-slate-200 text-sm; }
+.qb-step-icon.active { @apply border-2 border-brand bg-white text-brand; }
+.qb-step-icon.done { @apply bg-zinc-700 text-white; }
+.qb-panel h2 { @apply mb-6 text-lg font-bold; }
+.qb-panel h3 { @apply mt-5 font-bold; }
+.qb-session-mode { @apply flex h-20 w-28 flex-col items-center justify-center gap-2 rounded-md bg-olive font-bold text-white; }
+.qb-clinic { @apply mt-5 h-24 w-full rounded-md object-cover; }
+.qb-price-line { @apply mt-5 flex justify-between; }
+.qb-price-line strong { @apply text-brand; }
+.qb-time-panel { @apply relative pb-24; }
+.qb-time-panel header { @apply flex items-center justify-between; }
+.qb-icon { @apply rounded-full p-2 text-olive hover:bg-slate-100; }
+.qb-date-strip { @apply mb-7 flex gap-3 overflow-x-auto; }
+.qb-date-strip button { @apply min-w-24 rounded-md border border-slate-200 px-4 py-3; }
+.qb-date-strip button.selected { @apply border-olive bg-olive text-white; }
+.qb-date-strip button:disabled { @apply bg-slate-100 text-slate-400; }
+.qb-date-strip b, .qb-date-strip span, .qb-date-strip small { @apply block; }
+.qb-slot-group { @apply mb-6; }
+.qb-slot-group h3 { @apply mb-3 text-slate-400; }
+.qb-slot-group div { @apply flex flex-wrap gap-3; }
+.qb-slot-group button { @apply rounded-md border border-slate-200 px-7 py-3; }
+.qb-slot-group button.selected { @apply border-brand bg-brand text-white; }
+.qb-slot-group button:disabled { @apply bg-slate-100 text-slate-400; }
+.qb-time-panel footer { @apply absolute bottom-0 left-0 right-0 flex justify-end border-t p-5; }
+.qb-wide { @apply lg:col-span-1; }
+.qb-details, .qb-complete { @apply relative pb-24; }
+.qb-details input { @apply mb-4 w-full rounded-md border border-slate-300 px-4 py-3; }
+.qb-progress { @apply mb-8 flex items-center gap-4 text-sm font-bold text-slate-500; }
+.qb-progress span { @apply flex items-center gap-2; }
+.qb-progress .done { @apply text-zinc-600; }
+.qb-bottom { @apply absolute bottom-6 right-6; }
+.qb-summary-card { @apply flex items-center gap-4 rounded-lg border border-slate-200 p-4 shadow-sm; }
+.qb-summary-card img { @apply h-16 w-16 rounded-full object-cover; }
+.qb-summary-card p, .qb-summary-card small { @apply block text-sm text-slate-600; }
+.qb-summary-card button { @apply ml-auto flex items-center gap-2 rounded-full border px-5 py-2 font-bold text-olive; }
+.qb-countdown { @apply mb-6 rounded-md bg-red-100 py-3 text-center text-sm text-red-900; }
+.qb-row { @apply flex justify-between border-b py-4; }
+.qb-row.total { @apply font-bold; }
+.qb-pay { @apply mt-4 rounded-md bg-emerald-50 px-3 py-2 text-sm font-bold text-emerald-700; }
+.qb-success { @apply m-6 grid min-h-96 place-items-center rounded-lg bg-white p-10 text-center shadow-sm; }
+.qb-success h2 { @apply mt-4 text-2xl font-bold; }
+.qb-error { @apply mt-3 text-sm text-red-600; }
+.qb-modal-dim { @apply fixed inset-0 z-50 grid place-items-center bg-black/60 p-4; }
+.qb-calendar-modal { @apply w-full max-w-md rounded-xl bg-white p-6; }
+.qb-calendar-modal header { @apply flex justify-between border-b pb-4; }
+.qb-calendar-modal h3 { @apply text-xl font-bold; }
+.qb-month { @apply py-5 text-center text-lg font-bold; }
+.qb-legend { @apply mb-5 flex flex-wrap items-center gap-3 text-xs text-slate-500; }
+.qb-legend span { @apply inline-block h-2 w-2 rounded-full; }
+.qb-legend .ok { @apply bg-olive; }
+.qb-legend .few { @apply bg-brand; }
+.qb-legend .off { @apply bg-slate-300; }
+.qb-weekdays, .qb-calendar-grid { @apply grid grid-cols-7 gap-2 text-center; }
+.qb-weekdays { @apply mb-3 text-slate-500; }
+.qb-calendar-grid button { @apply grid h-10 place-items-center rounded-full font-semibold text-olive; }
+.qb-calendar-grid button.selected { @apply bg-olive text-white; }
+.qb-calendar-grid button:disabled, .qb-calendar-grid .muted { @apply text-slate-300; }
+@media (max-width: 1023px) {
+  .qb-book-layout { @apply grid-cols-1; }
+  .qb-time-panel footer, .qb-bottom { @apply static mt-6; }
+  .qb-details, .qb-complete, .qb-time-panel { @apply pb-6; }
+}

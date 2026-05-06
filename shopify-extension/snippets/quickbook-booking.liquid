@@ -1,0 +1,7 @@
+<link rel="stylesheet" href="{{ 'quickbook-widget.css' | asset_url }}">
+<div id="quickbook-widget-{{ section.id }}"></div>
+<script>
+  window.QUICKBOOK_API_URL = "{{ section.settings.quickbook_api_url | default: shop.metafields.quickbook.api_url }}";
+  window.QUICKBOOK_MOUNT_ID = "quickbook-widget-{{ section.id }}";
+</script>
+<script src="{{ 'quickbook-widget.iife.js' | asset_url }}" defer></script>
