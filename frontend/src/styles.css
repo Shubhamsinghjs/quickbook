@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
 :root {
   --qb-primary: #ED5A3E;
   --qb-primary-hover: #d94b30;
@@ -8,8 +10,8 @@
   --qb-border: #e2e8f0;
   --qb-success: #10b981;
   --qb-error: #ef4444;
-  --qb-radius: 12px;
-  --qb-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --qb-radius: 16px;
+  --qb-font: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   --qb-shadow: 0 4px 12px rgba(0,0,0,0.05);
   --qb-shadow-hover: 0 10px 20px rgba(0,0,0,0.08);
 }
@@ -27,19 +29,19 @@
 
 /* Typography & General */
 .qb-brand-text { color: var(--qb-primary); }
-.qb-light-text { color: var(--qb-text-light); font-size: 0.9rem; }
-.qb-error { color: var(--qb-error); font-size: 0.875rem; background: #fef2f2; padding: 10px; border-radius: 8px; border-left: 3px solid var(--qb-error); margin-top: 10px; }
-.qb-subtitle { font-size: 0.95rem; font-weight: 600; color: var(--qb-text); margin-bottom: 8px; }
+.qb-light-text { color: var(--qb-text-light); font-size: 1rem; }
+.qb-error { color: var(--qb-error); font-size: 1rem; background: #fef2f2; padding: 12px; border-radius: 8px; border-left: 3px solid var(--qb-error); margin-top: 10px; }
+.qb-subtitle { font-size: 1.1rem; font-weight: 600; color: var(--qb-text); margin-bottom: 10px; }
 
 /* Buttons */
 .qb-primary {
   background: var(--qb-primary);
   color: white;
   border: none;
-  border-radius: 8px;
-  padding: 12px 24px;
+  border-radius: 12px;
+  padding: 16px 32px;
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 1.1rem;
   cursor: pointer;
   transition: all 0.2s ease;
   width: 100%;
@@ -211,8 +213,8 @@
 .qb-progress .active { color: var(--qb-primary); border-bottom: 2px solid var(--qb-primary); margin-bottom: -14px; padding-bottom: 12px; }
 
 .qb-form-group { margin-bottom: 20px; }
-.qb-form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; color: var(--qb-text); }
-.qb-input { width: 100%; padding: 12px 16px; border: 1px solid var(--qb-border); border-radius: 8px; font-size: 0.95rem; font-family: inherit; transition: all 0.2s; outline: none; background: white; }
+.qb-form-group label { display: block; font-size: 1rem; font-weight: 600; margin-bottom: 10px; color: var(--qb-text); }
+.qb-input { width: 100%; padding: 14px 20px; border: 1px solid var(--qb-border); border-radius: 12px; font-size: 1.1rem; font-family: inherit; transition: all 0.2s; outline: none; background: white; }
 .qb-input:focus { border-color: var(--qb-primary); box-shadow: 0 0 0 3px rgba(237, 90, 62, 0.1); }
 
 /* PhoneInput Overrides */

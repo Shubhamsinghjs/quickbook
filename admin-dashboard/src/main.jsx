@@ -166,11 +166,28 @@ function Bookings({ api, doctors }) {
     const query = new URLSearchParams(Object.fromEntries(Object.entries(filters).filter(([, value]) => value))).toString();
     setBookings(await api.request(`/bookings${query ? `?${query}` : ''}`));
   }
-  useEffect(() => { load(); }, []);
+  function exportToCsv() {
+    if (bookings.length === 0) return;
+    const header = ['Patient', 'Email', 'Phone', 'Doctor', 'Date', 'Time', 'Status'];
+    const rows = bookings.map((b) => [
+      b.name, b.email, b.phone, b.doctor?.name || '', b.date, b.time, b.status
+    ].map(v => `"${v}"`).join(','));
+    const csv = [header.join(','), ...rows].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `bookings-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+  }
+
   return <section className="panel space-y-4">
     <div className="flex items-center justify-between gap-3 flex-wrap">
       <h2 className="section-title">Booking Management</h2>
-      <button className="btn-secondary" onClick={load}>Apply Filters</button>
+      <div className="flex gap-2">
+        <button className="btn-secondary" onClick={exportToCsv}>Export to Excel</button>
+        <button className="btn-secondary" onClick={load}>Apply Filters</button>
+      </div>
     </div>
     <div className="grid gap-3 md:grid-cols-3">
       <select className="input" value={filters.doctor} onChange={(e) => setFilters({ ...filters, doctor: e.target.value })}>
@@ -203,9 +220,10 @@ function DashboardStats({ stats }) {
   const cards = [
     ['Total doctors', stats.totalDoctors || 0],
     ['Total bookings', stats.totalBookings || 0],
-    ['Upcoming appointments', stats.upcomingAppointments || 0]
+    ['Upcoming appointments', stats.upcomingAppointments || 0],
+    ['Completed appointments', stats.completedAppointments || 0]
   ];
-  return <section className="grid gap-4 md:grid-cols-3">
+  return <section className="grid gap-4 md:grid-cols-4">
     {cards.map(([label, value], index) => <motion.article key={label} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }} className="panel">
       <p className="text-sm font-semibold text-slate-500">{label}</p>
       <strong className="mt-2 block text-3xl text-ink">{value}</strong>

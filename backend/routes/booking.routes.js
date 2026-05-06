@@ -50,12 +50,14 @@ router.post('/', async (req, res, next) => {
     await SlotLock.deleteOne({ _id: lock._id });
 
     const html = bookingSummaryHtml(booking, doctor);
-    Promise.allSettled([
+    const emailPromises = Promise.allSettled([
       sendEmail({ to: input.email, subject: 'QuickBook appointment confirmed', html }),
       process.env.ADMIN_NOTIFY_EMAIL
         ? sendEmail({ to: process.env.ADMIN_NOTIFY_EMAIL, subject: 'New QuickBook appointment', html })
         : Promise.resolve()
-    ]).catch(console.error); // Fire and forget to avoid blocking response
+    ]);
+    const timeout = new Promise(resolve => setTimeout(resolve, 3000));
+    await Promise.race([emailPromises, timeout]).catch(console.error);
 
     res.status(201).json(await booking.populate('doctor'));
   } catch (err) {
