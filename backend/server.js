@@ -35,6 +35,25 @@ app.use('/api/bookings', bookingRoutes);
 app.use(errorHandler);
 
 const port = process.env.PORT || 5000;
-await connectDb();
-await ensureAdminUser();
-app.listen(port, () => console.log(`QuickBook API running on ${port}`));
+
+process.on('unhandledRejection', (reason) => {
+  console.error('Unhandled Rejection:', reason);
+});
+
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error);
+});
+
+async function startServer() {
+  try {
+    await connectDb();
+    await ensureAdminUser();
+    app.listen(port, () => console.log(`QuickBook API running on ${port}`));
+  } catch (error) {
+    console.error('Startup failed:', error?.message || error);
+    if (error?.stack) console.error(error.stack);
+    process.exit(1);
+  }
+}
+
+startServer();
