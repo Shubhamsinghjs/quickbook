@@ -1,0 +1,80 @@
+name: Deploy GitHub Pages (Widget)
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - "frontend/**"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Build widget
+        run: npm run build --workspace frontend
+
+      - name: Prepare Pages artifact
+        run: |
+          mkdir -p pages
+          cp -r frontend/dist/* pages/
+          # Simple preview page
+          cat > pages/index.html << 'EOF'
+          <!doctype html>
+          <html>
+            <head>
+              <meta charset="utf-8" />
+              <meta name="viewport" content="width=device-width, initial-scale=1" />
+              <title>QuickBook Widget Preview</title>
+              <link rel="stylesheet" href="./quickbook-widget.css" />
+              <style>body{margin:0;background:#f6f7f9;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}</style>
+            </head>
+            <body>
+              <div id="qb-root" style="min-height:120px"></div>
+              <script src="./quickbook-widget.iife.js?mount=qb-root&api=https%3A%2F%2Fquickbook-backend-8hcm.onrender.com%2Fapi"></script>
+            </body>
+          </html>
+          EOF
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: pages
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -256,13 +256,29 @@ function SecurityPanel({ api }) {
   }
 
   return <section className="panel space-y-4">
-    <h2 className="section-title">Security</h2>
+    <h2 className="section-title">Security & Debug</h2>
     <form className="grid gap-3 md:grid-cols-3" onSubmit={(e) => updatePassword(e).catch((err) => setError(err.message))}>
       <input className="input" type="password" placeholder="Current password" value={form.currentPassword} onChange={(e) => setForm({ ...form, currentPassword: e.target.value })} required />
       <input className="input" type="password" placeholder="New password (min 8 chars)" value={form.newPassword} onChange={(e) => setForm({ ...form, newPassword: e.target.value })} required />
       <input className="input" type="password" placeholder="Confirm new password" value={form.confirmPassword} onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })} required />
       <button className="btn md:col-span-3 w-fit">Change Password</button>
     </form>
+    <div className="pt-4 border-t border-slate-100">
+      <p className="text-sm text-slate-500 mb-2">Test Email Configuration</p>
+      <div className="flex gap-2">
+        <input id="test-email-input" className="input max-w-xs" placeholder="Enter email to test" type="email" />
+        <button className="btn-secondary" onClick={async () => {
+          const email = document.getElementById('test-email-input').value;
+          if (!email) return alert('Enter email');
+          try {
+            const res = await api.request('/bookings/test-email', { method: 'POST', body: JSON.stringify({ to: email }) });
+            alert(res.message);
+          } catch (err) {
+            alert('Failed: ' + err.message);
+          }
+        }}>Send Test Email</button>
+      </div>
+    </div>
     {message && <p className="text-sm text-emerald-600">{message}</p>}
     {error && <p className="text-sm text-red-600">{error}</p>}
   </section>;

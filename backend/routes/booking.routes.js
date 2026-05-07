@@ -50,14 +50,11 @@ router.post('/', async (req, res, next) => {
     await SlotLock.deleteOne({ _id: lock._id });
 
     const html = bookingSummaryHtml(booking, doctor);
-    const emailPromises = Promise.allSettled([
-      sendEmail({ to: input.email, subject: 'QuickBook appointment confirmed', html }),
-      process.env.ADMIN_NOTIFY_EMAIL
-        ? sendEmail({ to: process.env.ADMIN_NOTIFY_EMAIL, subject: 'New QuickBook appointment', html })
-        : Promise.resolve()
-    ]);
-    const timeout = new Promise(resolve => setTimeout(resolve, 3000));
-    await Promise.race([emailPromises, timeout]).catch(console.error);
+    // Send emails in background without blocking the response, but with proper error logging
+    sendEmail({ to: input.email, subject: 'QuickBook appointment confirmed', html }).catch(err => console.error('Booking Confirmation Email Error:', err.message));
+    if (process.env.ADMIN_NOTIFY_EMAIL) {
+      sendEmail({ to: process.env.ADMIN_NOTIFY_EMAIL, subject: 'New QuickBook appointment', html }).catch(err => console.error('Admin Notification Email Error:', err.message));
+    }
 
     res.status(201).json(await booking.populate('doctor'));
   } catch (err) {
@@ -91,6 +88,20 @@ router.patch('/:id/status', requireAdmin, async (req, res, next) => {
     res.json(booking);
   } catch (err) {
     next(err);
+  }
+});
+
+router.post('/test-email', requireAdmin, async (req, res, next) => {
+  try {
+    const { to } = z.object({ to: z.string().email() }).parse(req.body);
+    await sendEmail({ 
+      to, 
+      subject: 'QuickBook Email Test', 
+      html: '<h1>Success!</h1><p>If you see this, your email configuration is working correctly.</p>' 
+    });
+    res.json({ message: 'Test email sent successfully. Please check your inbox (and spam folder).' });
+  } catch (err) {
+    res.status(500).json({ message: 'Email test failed: ' + err.message });
   }
 });
 

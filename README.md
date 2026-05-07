@@ -96,65 +96,52 @@ ADMIN_PASSWORD=change-me
 
 Use those credentials at `http://localhost:5173`.
 
-## Shopify Connection
+## Shopify Integration (via GitHub/jsDelivr)
 
-Build the widget:
+For high-speed, free hosting without Netlify/Vercel limits, use **jsDelivr** which serves files directly from this repository.
 
-```bash
-npm run build --workspace frontend
-```
-
-Upload these files to Shopify theme assets or your CDN:
-
-```txt
-frontend/dist/quickbook-widget.iife.js
-frontend/dist/quickbook-widget.css
-```
-
-Use `shopify-extension/blocks/quickbook-booking.liquid` as a theme app block, or paste this into a Custom Liquid section:
+### 1. Liquid Snippet (Add to Shopify Custom Liquid)
 
 ```liquid
-<link rel="stylesheet" href="https://your-cdn.com/quickbook-widget.css">
-<div id="quickbook-widget"></div>
+<!-- QuickBook Widget Styling -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Shubhamsinghjs/quickbook@main/docs/quickbook-widget.css">
+
+<!-- Mounting Point -->
+<div id="quickbook-widget" style="min-height: 200px;"></div>
+
+<!-- Configuration -->
 <script>
-  window.QUICKBOOK_API_URL = "https://your-render-api.onrender.com/api";
+  window.QUICKBOOK_API_URL = "https://quickbook-backend-8hcm.onrender.com/api";
+  window.QUICKBOOK_MOUNT_ID = "quickbook-widget";
 </script>
-<script src="https://your-cdn.com/quickbook-widget.iife.js" defer></script>
+
+<!-- Widget Logic -->
+<script src="https://cdn.jsdelivr.net/gh/Shubhamsinghjs/quickbook@main/docs/quickbook-widget.iife.js" defer></script>
 ```
 
-The widget can be placed on homepage, product page, or custom page.
+---
 
-## Deployment
+## Admin & Email Management
 
-Backend on Render:
+### Security & Debug Panel
+Logged-in admins can now test the email configuration directly from the **Security & Debug** section at the top of the dashboard. This helps verify if your Gmail SMTP settings are correct without making a real booking.
 
-1. Create a Web Service from this repo.
-2. Root directory: `backend`.
-3. Build command: `npm install`.
-4. Start command: `npm start`.
-5. Add backend environment variables.
-6. Set `MONGODB_URI` to MongoDB Atlas.
+### Gmail SMTP Setup
+1. Enable **2-Step Verification** in your Google Account.
+2. Go to **Security > App Passwords**.
+3. Create an app password for "Mail".
+4. Update `SMTP_USER` with your email and `SMTP_PASS` with the 16-character app password.
+5. Set `EMAIL_FROM` to match your `SMTP_USER`.
 
-MongoDB Atlas:
+---
 
-1. Create a free cluster.
-2. Create database user.
-3. Allow Render/Vercel IPs or use `0.0.0.0/0` during initial setup.
-4. Copy connection string to `MONGODB_URI`.
+## Deployment (GitHub Pages)
 
-Admin dashboard on Vercel:
-
-1. Root directory: `admin-dashboard`.
-2. Build command: `npm run build`.
-3. Output directory: `dist`.
-4. Set `VITE_API_URL=https://your-render-api.onrender.com/api`.
-
-Frontend widget on Vercel/CDN:
-
-1. Root directory: `frontend`.
-2. Build command: `npm run build`.
-3. Upload or host `dist/quickbook-widget.iife.js` and `dist/frontend.css`.
-4. Set `window.QUICKBOOK_API_URL` in the Shopify snippet.
+The `docs` folder is configured for GitHub Pages. 
+1. Go to **Repo Settings > Pages**.
+2. Select **Branch: main** and **Folder: /docs**.
+3. Your admin dashboard will be live at `https://shubhamsinghjs.github.io/quickbook/admin`.
+4. Your widget files will be live at `https://shubhamsinghjs.github.io/quickbook/quickbook-widget.iife.js`.
 
 ## API Routes
 

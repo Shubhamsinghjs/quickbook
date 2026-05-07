@@ -28,8 +28,20 @@ export async function sendEmail(message) {
     console.log('[email disabled]', message);
     return;
   }
-  if (process.env.EMAIL_PROVIDER === 'resend') return sendWithResend(message);
-  return sendWithSmtp(message);
+  try {
+    if (process.env.EMAIL_PROVIDER === 'resend') {
+      const res = await sendWithResend(message);
+      console.log('Email sent via Resend:', res);
+      return res;
+    }
+    const res = await sendWithSmtp(message);
+    console.log('Email sent via SMTP:', res.messageId);
+    return res;
+  } catch (error) {
+    console.error('CRITICAL EMAIL FAILURE:', error.message);
+    if (error.response) console.error('SMTP Response:', error.response);
+    throw error;
+  }
 }
 
 export function bookingSummaryHtml(booking, doctor) {
