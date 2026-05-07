@@ -75,8 +75,7 @@ function DoctorCards({ onBook }) {
       </div>
       <NextSlot doctorId={doctor._id} />
       <div className="qb-card-actions">
-        <button className="qb-outline">View Profile</button>
-        <button className="qb-primary" onClick={() => onBook(doctor)}>Book</button>
+        <button className="qb-primary" onClick={() => onBook(doctor)}>Book Appointment</button>
       </div>
     </motion.article>)}
   </section>;

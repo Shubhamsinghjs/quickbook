@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { CalendarDays, LogOut, Save, Stethoscope, Trash2 } from 'lucide-react';
 import './styles.css';
 
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API = import.meta.env.VITE_API_URL || 'https://quickbook-backend-8hcm.onrender.com/api';
 
 function useApi(token) {
   return useMemo(() => ({
